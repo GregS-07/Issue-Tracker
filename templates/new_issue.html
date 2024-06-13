@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Add Issue</h1>
+
+    <form class="pure-form pure-form-stacked" action="/add" method="POST" class="pure-form pure-form-stacked">
+        <legend>Create a new issue</legend>
+        <label for="title">Title</label>
+        <input required class="pure-input" type="text" name="title" id="title">
+
+        <label for="description">Description</label>
+        <input required class="pure-input" type="text" name="description" id="description">
+
+        <input class="pure-button pure-button-primary" type="submit">
+    </form>
+{% endblock %}

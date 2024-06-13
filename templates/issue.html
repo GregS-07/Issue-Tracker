@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ issue[1] }}</h1>
+    <p>{{ issue[2] }}</p>
+    <p>{{ issue[3] }}</p>
+
+    <form class="pure-form" action="/issue_{{ issue[0] }}" method="POST">
+        <label for="status">State</label>
+        <select default="Status" name="status" id="status" class="pure-input">
+            <option value="" selected disabled hidden>Select State</option>
+            <option>Open</option>
+            <option>In-Progress</option>
+            <option>Closed</option>
+        </select>
+        <input type="submit" class="pure-button pure-button-primary">
+    </form>
+{% endblock %}

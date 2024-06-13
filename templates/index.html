@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>All Issues</h1>
+
+    <table class="pure-table pure-table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            <tbody>
+                {% for issue in issues %}
+                <tr>
+                    <td>{{ issue[0] }}</td>
+                    <td>{{ issue[1] }}</td>
+                    <td class="
+                    {% if issue[3] == 'Open' %}
+                    status-open
+                    {% elif issue[3] == 'In-Progress' %}
+                        status-in-progress
+                    {% elif issue[3] == 'Closed' %}
+                        status-closed
+                    {% endif %}
+                    ">{{ issue[3] }}</td>
+                    <td><a class="pure-menu-link" href="/issue_{{ issue[0] }}">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </thead>
+    </table>
+
+{% endblock %}
+

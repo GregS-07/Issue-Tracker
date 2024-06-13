@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container pure-g">
+        <nav class="pure-menu pure-menu-horizontal">
+            <span class="pure-menu-heading">Issue Tracker</span>
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item">
+                    <a href="/" class="pure-menu-link">Dashboard</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="/" class="pure-menu-link">View All</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="/add" class="pure-menu-link">New</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="/delete" class="pure-menu-link">How To</a>
+                </li>
+            </ul>
+
+            <main>
+                {% block content %}{% endblock %}
+            </main>
+            <footer class="pure-u-1">
+                <p>View personal <a href="gregsternik.netlify.app">Site</a></p>
+            </footer>
+        </nav>
+    </div>
+</body>
+</html>
