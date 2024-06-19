@@ -1,24 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ issue[1] }}</h1>
-    <p>{{ issue[2] }}</p>
-    <p>{{ issue[3] }}</p>
+    <h1 class="text-center">{{ issue[1] }}</h1>
+    <p class="text-center">ID : {{ issue[0] }}</p>
+    <p class="text-center">{{ issue[2] }}</p>
+    <p class="text-center">{{ issue[3] }}</p>
 
-    <form class="pure-form" action="/issue_{{ issue[0] }}" method="POST">
-        <label for="status">State</label>
-        <select default="Status" name="status" id="status" class="pure-input">
-            <option value="" selected disabled hidden>Select State</option>
-            <option>Open</option>
-            <option>In-Progress</option>
-            <option>Closed</option>
-        </select>
-        <input type="submit" class="pure-button pure-button-primary">
+    <hr>
+
+    <form action="/issue_{{ issue[0] }}" method="POST" class="container mt-4">
+        <div class="form-group">
+            <label for="status">State</label>
+            <select class="form-control" name="status" id="status">
+                <option value="" selected disabled hidden>Select State</option>
+                <option>Open</option>
+                <option>In-Progress</option>
+                <option>Closed</option>
+            </select>
+        </div>
+    
+        <button type="submit" class="btn btn-primary">Update Status</button>
     </form>
 
-    <form action="/issue_{{ issue[0] }}" method="POST">
-        <input type="hidden" name="_method" value="DELETE">
-        <label for="delete">Delete Issue</label>
-        <button class="pure-button button-error">Delete</button>
+    <form action="/issue_{{ issue[0] }}" method="POST" class="container mt-4">
+        <div class="form-group">
+            <input type="hidden" name="_method" value="DELETE">
+            <label for="delete">Delete Issue</label>
+            <button class="btn btn-danger">Delete</button>
+        </div>
     </form>
 {% endblock %}

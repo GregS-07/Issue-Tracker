@@ -3,14 +3,19 @@
 {% block content %}
     <h1>Add Issue</h1>
 
-    <form class="pure-form pure-form-stacked" action="/add" method="POST" class="pure-form pure-form-stacked">
+    <form action="/add" method="POST" class="pure-form pure-form-stacked">
+
         <legend>Create a new issue</legend>
-        <label for="title">Title</label>
-        <input required class="pure-input" type="text" name="title" id="title">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input maxlength="50" class="form-control" type="text" name="title" id="title">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea maxlength="250" class="form-control" type="text" name="description" id="description"></textarea>
+        </div>
 
-        <label for="description">Description</label>
-        <input required class="pure-input" type="text" name="description" id="description">
+        <input class="btn btn-primary" type="submit">
 
-        <input class="pure-button pure-button-primary" type="submit">
     </form>
 {% endblock %}

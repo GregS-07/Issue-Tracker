@@ -102,5 +102,20 @@ def issue(id):
                 conn.commit()
             return redirect(url_for("home", id=id))  # Redirect to home after updating status
 
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    issues = []
+    if request.method == "POST":
+        search_query = request.form["search"]
+
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            if search_query:
+                cursor.execute("SELECT * FROM issues WHERE title LIKE ? OR description LIKE ?", ('%'+search_query+'%', '%'+search_query+'%'))
+
+            issues = cursor.fetchall()
+
+    return render_template("search.html", issues=issues)
+
 if __name__ == '__main__':
     app.run(debug=True)

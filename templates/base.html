@@ -3,36 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <title>Issue Tracker</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container pure-g">
-        <nav class="pure-menu pure-menu-horizontal">
-            <span class="pure-menu-heading">Issue Tracker</span>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item">
-                    <a href="/" class="pure-menu-link">Dashboard</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="/" class="pure-menu-link">View All</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="/add" class="pure-menu-link">New</a>
-                </li>
-                <li class="pure-menu-item">
-                    <a href="/delete" class="pure-menu-link">How To</a>
-                </li>
-            </ul>
+    <div class="container-fluid">
 
-            <main>
-                {% block content %}{% endblock %}
-            </main>
-            <footer class="pure-u-1">
-                <p>View personal <a href="gregsternik.netlify.app">Site</a></p>
-            </footer>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <a class="navbar-brand" href="#">Issue Tracker</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a>
+                    </li>
+                    <li class="nav-item">
+                       <a class="nav-link" href="/add">Create</a> 
+                    </li>
+                </ul>
+            </div>
         </nav>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="mt-4 text-center">
+            <p>View personal <a href="https://gregsternik.netlify.app" target="_blank">Site</a></p>
+        </footer>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form class="form-inline" action="/search" method="POST">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="search">Look for issue</label>
+            <input type="text" class="form-control mb-2" id="search" name="search" placeholder="Issue Name">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Search</button>
+        </div>
+    </div>
+</form>
+
+{% if issues %}
+    <div class="row">
+        {% for issue in issues %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ issue[1] }}</h2>
+                        <p class="card-text">ID: {{ issue[0] }}</p>
+                        <p class="card-text">{{ issue[2] }}</p>
+                        <a href="/issue_{{ issue[0] }}" class="link-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-warning" role="alert">
+        No issues found.
+    </div>
+{% endif %}
+
+
+{% endblock %}
