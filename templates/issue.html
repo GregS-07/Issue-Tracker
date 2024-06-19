@@ -4,7 +4,15 @@
     <h1 class="text-center">{{ issue[1] }}</h1>
     <p class="text-center">ID : {{ issue[0] }}</p>
     <p class="text-center">{{ issue[2] }}</p>
-    <p class="text-center">{{ issue[3] }}</p>
+    <p class="text-center
+    {% if issue[3] == 'Open' %}
+    status-open
+    {% elif issue[3] == 'In-Progress' %}
+        status-in-progress
+    {% elif issue[3] == 'Closed' %}
+        status-closed
+    {% endif %}
+    ">{{ issue[3] }}</p>
 
     <hr>
 
