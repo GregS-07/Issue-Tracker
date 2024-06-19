@@ -15,4 +15,10 @@
         </select>
         <input type="submit" class="pure-button pure-button-primary">
     </form>
+
+    <form action="/issue_{{ issue[0] }}" method="POST">
+        <input type="hidden" name="_method" value="DELETE">
+        <label for="delete">Delete Issue</label>
+        <button class="pure-button button-error">Delete</button>
+    </form>
 {% endblock %}
