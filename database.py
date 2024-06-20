@@ -14,7 +14,7 @@ cursor.execute('''
 
 cursor.execute('''
     ALTER TABLE issues
-    ADD COLUMN archivedOn DATE DEFAULT NULL
+    ADD COLUMN IF NOT EXISTS archivedOn DATE DEFAULT NULL
 ''')
 
 conn.commit()
