@@ -16,14 +16,15 @@ def get_conn():
 def create_graph():
     with get_conn() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT status, COUNT(*) AS count FROM issues GROUP BY status")
+
+        # Non-archived issues
+        cursor.execute("SELECT status, COUNT(*) AS count FROM issues WHERE archivedOn IS NULL GROUP BY status")
         issues_count = cursor.fetchall()
         
-        # Converting the tuples into lists
         statuses = [row[0] for row in issues_count]
         counts = [row[1] for row in issues_count]
 
-        # Define colors based on status 
+        # Define colors based on status
         colors = []
         for status in statuses:
             if status == 'Open':
@@ -43,9 +44,43 @@ def create_graph():
         # Set y-axis to display whole numbers
         plt.gca().yaxis.set_major_locator(plt.MaxNLocator(integer=True))
 
-        # Creating and saving graph
+        # Creating and saving unarchived graph
         plt.bar(statuses, counts, color=colors)
         plt.savefig("static/images/issues_status_graph.png")
+
+        # Clear memory
+        plt.clf()
+
+        # Archived issues
+        cursor.execute("SELECT status, COUNT(*) AS count FROM issues WHERE archivedOn IS NOT NULL GROUP BY status")
+        a_issues_count = cursor.fetchall()
+        
+        a_statuses = [row[0] for row in a_issues_count]
+        a_counts = [row[1] for row in a_issues_count]
+
+        # Define colors based on status for archived issues
+        a_colors = []
+        for status in a_statuses:
+            if status == 'Open':
+                a_colors.append('green')
+            elif status == 'In-Progress':
+                a_colors.append('yellow')
+            elif status == 'Closed':
+                a_colors.append('red')
+            else:
+                a_colors.append('gray')  # Default color for any other status
+
+        # Set labels
+        plt.ylabel("Archived Issues")
+        plt.xlabel("Status")    
+        plt.title("Total Archived Issues By Status")
+
+        # Set y-axis to display whole numbers
+        plt.gca().yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+
+        # Creating and saving archived graph
+        plt.bar(a_statuses, a_counts, color=a_colors)
+        plt.savefig("static/images/issues_archived_status_graph.png")
 
         # Clear memory
         plt.clf()
@@ -56,12 +91,15 @@ def create_graph():
 def home():
     with get_conn() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM issues")
+        cursor.execute("SELECT * FROM issues WHERE archivedOn IS NULL")
         issues = cursor.fetchall()
+
+        cursor.execute("SELECT * FROM issues WHERE archivedOn IS NOT NULL")
+        archived_issues = cursor.fetchall()
 
     create_graph()
 
-    return render_template("index.html", issues=issues)
+    return render_template("index.html", issues=issues, archived_issues=archived_issues)
 
 # Route to add a new issue
 @app.route("/add", methods=["GET", "POST"])
@@ -78,13 +116,15 @@ def add_issue():
     return render_template("new_issue.html")
 
 # Route to view and update/delete an issue
-@app.route("/issue_<int:id>", methods=["GET", "POST", "DELETE"])
+@app.route("/issue_<int:id>", methods=["GET", "POST"])
 def issue(id):
     if request.method == "GET":
         with get_conn() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM issues WHERE id = ?", (id,))
             issue = cursor.fetchone()
+
+            print(issue[4])
         return render_template("issue.html", issue=issue)
 
     if request.method == "POST":
@@ -94,6 +134,15 @@ def issue(id):
                 cursor.execute("DELETE FROM issues WHERE id = ?", (id,))
                 conn.commit()
             return redirect(url_for("home"))  # Redirect to home after deleting issue
+        elif request.form.get("_method") == "ARCHIVE":
+            with get_conn() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE issues
+                    SET archivedOn = DATE('now')
+                    WHERE id = ?
+                ''', (id,))
+            return redirect(url_for("home", id=id))  # Redirect to home after updating status
         else:
             new_status = request.form["status"]
             with get_conn() as conn:
@@ -118,4 +167,4 @@ def search():
     return render_template("search.html", issues=issues)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)

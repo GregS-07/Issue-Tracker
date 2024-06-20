@@ -12,7 +12,10 @@ cursor.execute('''
     )
 ''')
 
-cursor.execute("INSERT INTO issues (title, description, status) VALUES (?, ?, ?)", ("Example", "This is the description of the example issue", "Open"))
+cursor.execute('''
+    ALTER TABLE issues
+    ADD COLUMN archivedOn DATE DEFAULT NULL
+''')
 
 conn.commit()
 conn.close()

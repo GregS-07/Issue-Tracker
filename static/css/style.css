@@ -1,3 +1,5 @@
+/* colours for status */
+
 .status-open {
     color: green;
 }
@@ -8,4 +10,10 @@
 
 .status-closed {
     color: red;
+}
+
+/* slider control icons */
+
+.dark{
+    filter: brightness(0);
 }

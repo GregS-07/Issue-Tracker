@@ -37,4 +37,26 @@
             <button class="btn btn-danger">Delete</button>
         </div>
     </form>
+
+
+    <form action="issue_{{ issue[0] }}" method="POST" class="container mt-4">
+        <div class="form-group">
+            <input type="hidden" name="_method" value="ARCHIVE">
+            <label for="archive">
+                {% if issue[4] == None %} 
+                    Archive Issue
+                {% else %} 
+                    Un-Archive Issue 
+                {% endif %}
+            </label>
+            <button name="archive" id="archive" class="btn btn-secondary">
+                {% if issue[4] == None %} 
+                    Archive
+                {% else %} 
+                    Un-Archive
+                {% endif %}
+            </button>
+        </div>
+    </form>
+
 {% endblock %}
