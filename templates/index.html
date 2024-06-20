@@ -43,6 +43,10 @@
                 <div class="carousel-item">
                     <img class="img-fluid d-block mx-auto" src="{{ url_for('static', filename='images/issues_archived_status_graph.png') }}" alt="Archived Issues Status Graph">
                 </div>
+
+                <div class="carousel-item">
+                    <img class="img-fluid d-block mx-auto" src="{{ url_for('static', filename='images/issues_archived_unarchived_total.png') }}" alt="Total Archived Issues V.S. Total Unarchived Issues">
+                </div>
             </div>
 
             <a class="carousel-control-prev" href="#issuesCarousel" role="button" data-slide="prev">
@@ -57,7 +61,7 @@
     </div>
 
     <h2>Archived Issues</h2>
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-dark table-hover">
         <thead>
             <tr>
                 <th>ID</th>

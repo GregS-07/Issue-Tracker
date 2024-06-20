@@ -13,11 +13,16 @@
         <div class="col-auto">
             <button type="submit" class="btn btn-primary mb-2">Search</button>
         </div>
+
+        <div class="row justify-content-center ml-3">
+            <input type="checkbox" name="include-archived" id="include-archived" class="form-check-input">
+            <label for="include-archived">Include Archived Issues</label>
+        </div>
     </div>
 </form>
 
 {% if issues %}
-    <div class="row">
+    <div class="row search-result">
         {% for issue in issues %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -36,6 +41,14 @@
         No issues found.
     </div>
 {% endif %}
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(() => {
+        $(".card").css("display", "none");
+        $(".card").each(function(index) {
+            $(this).delay(150 * index).fadeIn(500);
+        });
+    })
+</script>
 
 {% endblock %}

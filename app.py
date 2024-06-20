@@ -84,6 +84,20 @@ def create_graph():
 
         # Clear memory
         plt.clf()
+
+        # Creating and saving archived vs unarchived pie chart
+
+        # Calculating totals
+        total = sum(counts)
+        a_total = sum(a_counts)
+
+        plt.pie([total, a_total] , colors=["red", "green"],  labels=[f"Archived Issues - {total}", f"Unarchived Issues {a_total}"])
+        plt.title("Total Archived Issues & Unarchived Issues")
+        plt.axis('equal') 
+        plt.savefig("static/images/issues_archived_unarchived_total.png")
+
+        # Clear memory
+        plt.clf()
         
 
 # Route to display all issues
@@ -137,11 +151,24 @@ def issue(id):
         elif request.form.get("_method") == "ARCHIVE":
             with get_conn() as conn:
                 cursor = conn.cursor()
-                cursor.execute('''
-                    UPDATE issues
-                    SET archivedOn = DATE('now')
-                    WHERE id = ?
-                ''', (id,))
+                cursor.execute("SELECT archivedOn FROM issues WHERE id = ?", (id,))
+                issue = cursor.fetchone()
+                print(issue)
+                if issue[0] is None:
+                    cursor.execute('''
+                        UPDATE issues
+                        SET archivedOn = DATE('now')
+                        WHERE id = ?
+                    ''', (id,))
+                    conn.commit()
+                else:
+                    cursor.execute('''
+                        UPDATE issues
+                        SET archivedOn = NULL
+                        WHERE id = ?
+                    ''', (id,))
+                    conn.commit()
+
             return redirect(url_for("home", id=id))  # Redirect to home after updating status
         else:
             new_status = request.form["status"]
@@ -160,7 +187,10 @@ def search():
         with get_conn() as conn:
             cursor = conn.cursor()
             if search_query:
-                cursor.execute("SELECT * FROM issues WHERE title LIKE ? OR description LIKE ?", ('%'+search_query+'%', '%'+search_query+'%'))
+                if request.form.get("include-archived"):
+                    cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?)", ('%' + search_query + '%', '%' + search_query + '%'))
+                else:
+                    cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?) AND archivedOn IS NULL", ('%' + search_query + '%', '%' + search_query + '%'))
 
             issues = cursor.fetchall()
 
