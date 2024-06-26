@@ -24,13 +24,17 @@
 {% if issues %}
     <div class="row search-result">
         {% for issue in issues %}
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 mt-5">
                 <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body search-result">
                         <h2 class="card-title">{{ issue[1] }}</h2>
                         <p class="card-text">ID: {{ issue[0] }}</p>
                         <p class="card-text">{{ issue[2] }}</p>
                         <a href="/issue_{{ issue[0] }}" class="link-primary">View</a>
+                        
+                        {% if issue[4] %}
+                        <div class="archived-tag">Archived</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="text-center">Manage Account</h2>
+<p class="text-center">Welcome {{session['username']}}, manage your account and details here:</p>
+<div class="d-flex flex-column justify-content-center align-items-center">
+
+    <form action="/logout" method="POST">
+        <button class="btn btn-primary mb-2">Sign Out</button>
+    </form>
+
+    <form action="/delete_account" method="POST" id="delete_form">
+        <button type="button" class="delete-btn btn btn-danger">Delete Account</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(() => {
+        console.log("click")
+
+        $(".delete-btn").on("click", () => {
+            if(confirm("This is a permanent action. Are you sure you want to delete your account?")){
+                $("#delete_form").submit();
+            }
+        })
+
+    })
+</script>
+
+{% endblock %}

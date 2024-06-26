@@ -17,3 +17,26 @@
 .dark{
     filter: brightness(0);
 }
+
+/* remainder of page after navbar */
+
+.fill{
+    min-height: calc(100vh - 56px - 56px)
+}
+
+/* Tag for archived results */
+
+.search-result{
+    position: relative;
+}
+
+.archived-tag{
+    position: absolute;
+    top: -45px;
+    left: 0px;
+    height: fit-content;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border-radius: 10px 10px 0px 0px;
+}

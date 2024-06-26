@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 import matplotlib
@@ -6,6 +6,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
+app.secret_key = b"6gtaptngf65/;g'7/e35#3]"
 
 # Function to get a SQLite connection
 def get_conn():
@@ -91,18 +92,86 @@ def create_graph():
         total = sum(counts)
         a_total = sum(a_counts)
 
-        plt.pie([total, a_total] , colors=["red", "green"],  labels=[f"Archived Issues - {total}", f"Unarchived Issues {a_total}"])
+        #error may occur due to lack of input
+        if total > 0 or a_total > 0:
+            plt.pie([total, a_total], colors=["red", "green"], labels=[f"Archived Issues - {total}", f"Unarchived Issues - {a_total}"])
+        else:
+            plt.pie([1, 1], colors=["red", "green"], labels=[f"No Archived Issues", f"No Unarchived Issues"])
         plt.title("Total Archived Issues & Unarchived Issues")
         plt.axis('equal') 
         plt.savefig("static/images/issues_archived_unarchived_total.png")
 
-        # Clear memory
         plt.clf()
         
+
+# Route to login
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
+            user = cursor.fetchone()
+
+            if user and user[1] == password:
+                # Store user information in session
+                session['username'] = user[0]
+                session['password'] = user[1]
+                return redirect(url_for('home'))
+            else:
+                return render_template("login.html", error="Incorrect username or password")
+            
+            db_password = user[0]
+            
+            if db_password == password:
+                return redirect(url_for("home"))
+            else:
+                return redirect(url_for("login"))
+        
+    elif request.method == "GET":
+        return render_template("login.html")
+
+# Route to login/signup
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        with get_conn() as conn:
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+            result = cursor.fetchone()
+
+            # SQLite doesn't enforce "UNIQUE" constraint so I have to check that it doesn't exist myself
+            if result is None:
+                cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+                return redirect(url_for("login"))
+
+            conn.commit()
+            
+        return redirect(url_for("signup"))
+    
+    elif request.method == "GET":
+        return render_template("signup.html")
+
+@app.route("/account")
+def account():
+    return render_template("account.html")
 
 # Route to display all issues
 @app.route("/")
 def home():
+    #if user isn't logged in, there will be an error which will redirect the user to the login page
+    try:
+        session["username"]
+    except:
+        return redirect(url_for("login"))
+
     with get_conn() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM issues WHERE archivedOn IS NULL")
@@ -124,7 +193,7 @@ def add_issue():
         status = "Open"
         with get_conn() as conn:
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO issues (title, description, status) VALUES (?, ?, ?)", (title, description, status))
+            cursor.execute("INSERT INTO issues (title, description, status, user) VALUES (?, ?, ?, ?)", (title, description, status, session["username"]))
             conn.commit()
         return redirect(url_for("home"))  # Redirect to home after adding issue
     return render_template("new_issue.html")
@@ -195,6 +264,21 @@ def search():
             issues = cursor.fetchall()
 
     return render_template("search.html", issues=issues)
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    if request.method == "POST":
+        session.clear()
+        return redirect(url_for("home"))
+
+@app.route("/delete_account", methods=["POST"])
+def delete_account():
+    if request.method == "POST":
+        with get_conn() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM users WHERE username = ?", (session["username"],))
+    session.clear()
+    return redirect(url_for("home"))
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)

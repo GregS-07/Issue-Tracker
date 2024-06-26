@@ -1,0 +1,33 @@
+{% extends "account_base.html" %}
+
+{% block content %}
+
+<h2 class="text-center">Login</h2>
+<form action="login" method="POST">
+    <div class="">
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input class="form-control" name="username" id="username" type="text">  
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input class="form-control" name="password" id="password" type="password">
+        </div>
+        
+        <button class="btn btn-primary">Submit</button>
+
+        {% if error %}
+            <p class="alert alert-warning">{{ error }}</p>
+        {% endif %}
+
+    </div>
+</form>
+
+<hr>
+<div class="row align-items-center justify-content-center">
+    <p class="mb-0 mr-2">or</p> <a href="/signup">Signup</a>
+</div>
+
+{% endblock %}

@@ -13,7 +13,7 @@
         status-closed
     {% endif %}
     ">{{ issue[3] }}</p>
-
+    <p class="text-center">Author - {{ issue[5] }}</p>
     <hr>
 
     <form action="/issue_{{ issue[0] }}" method="POST" class="container mt-4">

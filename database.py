@@ -14,6 +14,16 @@ cursor.execute('''
     )
 ''')
 
+# Creates the "users" table if it does not exist
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL
+     )
+''')
+
+cursor.execute("INSERT INTO users (username, password) VALUES ('admin', 'pass')")
 
 cursor.execute("PRAGMA table_info(issues)")
 columns = cursor.fetchall()
@@ -21,6 +31,9 @@ column_names = [column[1] for column in columns]
 
 if 'archivedOn' not in column_names:
     cursor.execute('ALTER TABLE issues ADD COLUMN archivedOn DATE DEFAULT NULL')
+
+if 'user' not in column_names:
+    cursor.execute('ALTER TABLE issues ADD COLUMN user TEXT NOT NULL')
 
 conn.commit()
 conn.close()
