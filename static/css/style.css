@@ -70,3 +70,9 @@ a:hover::before {
 nav a::before{
     background-color: black;
 }
+
+/* Removing from carousel */
+
+.carousel a:before{
+    display: none;
+}

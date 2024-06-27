@@ -175,7 +175,7 @@ def account():
 
 @app.route("/view_<user>")
 def user_page(user):
-
+    # Getting issues
     with get_conn() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM issues WHERE user = ? AND archivedOn IS NULL", (user,))
@@ -195,6 +195,7 @@ def home():
     except:
         return redirect(url_for("login"))
 
+    # Getting issues
     with get_conn() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM issues WHERE archivedOn IS NULL")
@@ -237,7 +238,7 @@ def issue(id):
         if request.form.get("_method") == "DELETE":
             with get_conn() as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM issues WHERE id = ?", (id,))
+                cursor.execute("DELETE FROM issues WHERE id = ?", (id,)) # Deleting issues of deleted account
                 conn.commit()
             return redirect(url_for("home"))  # Redirect to home after deleting issue
         elif request.form.get("_method") == "ARCHIVE":
@@ -306,9 +307,11 @@ def delete_account():
         with get_conn() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM users WHERE username = ?", (session["username"],))
+            cursor.execute("DELETE FROM issues WHERE user = ?", (session["username"],))
     session.clear()
     return redirect(url_for("home"))
 
+# Handling user trying to access a page that doesn't exist
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
