@@ -15,11 +15,19 @@
             <label for="password">Password</label>
             <input required minlength="8" class="form-control" name="password" id="password" type="password">
         </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label for="password-confirm">Confirm Password</label>
+            <input required minlength="8" class="form-control" name="password-confirm" id="password-confirm" type="password">
+        </div>
+        
         
         <button class="btn btn-primary">Submit</button>
 
         {% if error %}
-            <p class="alert alert-warning">{{ error }}</p>
+            <p class="alert alert-warning mt-2" role="alert">{{ error }}</p>
         {% endif %}
 
     </div>

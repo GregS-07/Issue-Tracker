@@ -134,27 +134,37 @@ def login():
     elif request.method == "GET":
         return render_template("login.html")
 
-# Route to login/signup
+# Route to signup
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+
+    # In case of unanticipated error
+    error = "Failed due to an error. Please try again"
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        
-        with get_conn() as conn:
-            cursor = conn.cursor()
+        password_confirm = request.form["password-confirm"]
 
-            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-            result = cursor.fetchone()
 
-            # SQLite doesn't enforce "UNIQUE" constraint so I have to check that it doesn't exist myself
-            if result is None:
-                cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-                return redirect(url_for("login"))
+        if password != password_confirm:
+            error="Passwords don't match"
+        else:
+            with get_conn() as conn:
+                cursor = conn.cursor()
 
-            conn.commit()
+                cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+                result = cursor.fetchone()
+
+                # SQLite doesn't enforce "UNIQUE" constraint so I have to check that it doesn't exist myself
+                if result is None:
+                    cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+                    return redirect(url_for("login"))
+                else:
+                    error="Username already exists"
+
+                conn.commit()
             
-        return redirect(url_for("signup"))
+        return render_template("signup.html", error=error)
     
     elif request.method == "GET":
         return render_template("signup.html")
@@ -162,6 +172,20 @@ def signup():
 @app.route("/account")
 def account():
     return render_template("account.html")
+
+@app.route("/<user>")
+def user():
+    with get_conn():
+        cursor = conn.cursor()
+        cursor.execute()
+    with get_conn():
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM issues WHERE user = ?", (user,))
+        issues = cursor.fetchall()
+
+        
+
+    return render_template()
 
 # Route to display all issues
 @app.route("/")
