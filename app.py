@@ -173,24 +173,23 @@ def signup():
 def account():
     return render_template("account.html")
 
-@app.route("/<user>")
-def user():
-    with get_conn():
+@app.route("/view_<user>")
+def user_page(user):
+
+    with get_conn() as conn:
         cursor = conn.cursor()
-        cursor.execute()
-    with get_conn():
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM issues WHERE user = ?", (user,))
+        cursor.execute("SELECT * FROM issues WHERE user = ? AND archivedOn IS NULL", (user,))
         issues = cursor.fetchall()
 
-        
+        cursor.execute("SELECT * FROM issues WHERE user = ? AND archivedOn IS NOT NULL", (user,))
+        archived_issues = cursor.fetchall()
 
-    return render_template()
+    return render_template("user.html", username=user, issues=issues, archived_issues=archived_issues)
 
 # Route to display all issues
 @app.route("/")
 def home():
-    #if user isn't logged in, there will be an error which will redirect the user to the login page
+    # If user isn't logged in, there will be an error which will redirect the user to the login page
     try:
         session["username"]
     except:
@@ -280,10 +279,16 @@ def search():
         with get_conn() as conn:
             cursor = conn.cursor()
             if search_query:
-                if request.form.get("include-archived"):
-                    cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?)", ('%' + search_query + '%', '%' + search_query + '%'))
+                if not request.form.get("exclude-other"):
+                    if request.form.get("include-archived"):
+                        cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?)", ('%' + search_query + '%', '%' + search_query + '%'))
+                    else:
+                        cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?) AND archivedOn IS NULL", ('%' + search_query + '%', '%' + search_query + '%'))
                 else:
-                    cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?) AND archivedOn IS NULL", ('%' + search_query + '%', '%' + search_query + '%'))
+                    if request.form.get("include-archived"):
+                        cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?) AND user = ?", ('%' + search_query + '%', '%' + search_query + '%', session["username"]))
+                    else:
+                        cursor.execute("SELECT * FROM issues WHERE (title LIKE ? OR description LIKE ?) AND archivedOn IS NULL AND user = ?", ('%' + search_query + '%', '%' + search_query + '%', session["username"]))
 
             issues = cursor.fetchall()
 
@@ -303,6 +308,10 @@ def delete_account():
             cursor.execute("DELETE FROM users WHERE username = ?", (session["username"],))
     session.clear()
     return redirect(url_for("home"))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)

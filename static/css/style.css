@@ -40,3 +40,33 @@
     color: white;
     border-radius: 10px 10px 0px 0px;
 }
+
+/* Link hover effect */
+
+a{
+    position: relative;
+}
+
+a::before{
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 1px;
+    background-color: #0d6efd;
+    top: 100%;
+    transition: .3s ease-in-out;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+a:hover::before {
+    width: 100%;
+}
+
+/* Specifically for nav  */
+
+nav a::before{
+    background-color: black;
+}

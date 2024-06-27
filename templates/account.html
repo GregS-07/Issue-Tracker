@@ -11,8 +11,10 @@
     </form>
 
     <form action="/delete_account" method="POST" id="delete_form">
-        <button type="button" class="delete-btn btn btn-danger">Delete Account</button>
+        <button type="button" class="delete-btn btn btn-danger mb-2">Delete Account</button>
     </form>
+
+    <a href="/view_{{ session['username'] }}">View Personal Dashboard</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
